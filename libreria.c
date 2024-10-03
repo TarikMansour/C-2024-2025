@@ -56,7 +56,7 @@ int main() {
     }
     char titolo[20];
     printf("inserire un libro da trovare \n");
-    scanf("%s", titolo);
+    scanf("%s", titolo); //scanf non legge titoli con spazi
     TrovaLibro(libri, titolo);
     return 0;
 }
