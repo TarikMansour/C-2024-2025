@@ -4,63 +4,59 @@
 #define MAX 38
 #define MAX_LINE_LENGTH 1024
 #define MAX_FIELDS 100
-typedef enum {
-    NARRATIVA, 
-    SAGGISTICA, 
-    SCIENZE, 
-    ARTE
-}Categoria;
 typedef struct {
     int anno_publicazione;
     double prezzo;
-    Categoria tipo; 
+    char tipo[50]; 
     char titolo[50];
     char autore[50];
 }Libro;
-Categoria stringToCategoria(const char* str) {
-    if (strcmp(str, "NARRATIVA") == 0) return NARRATIVA;
-    if (strcmp(str, "SAGGISTICA") == 0) return SAGGISTICA;
-    if (strcmp(str, "SCIENZE") == 0) return SCIENZE;
-    if (strcmp(str, "ARTE") == 0) return ARTE;
-    return NARRATIVA; // Valore di default
-}
-void parseCSVLine(char *line, Libro *libro) {
-    char *token = strtok(line, ",");
-    if (token) strcpy(libro->titolo, token);
-    token = strtok(NULL, ",");
-    if (token) strcpy(libro->autore, token);
-    token = strtok(NULL, ",");
-    if (token) libro->tipo = stringToCategoria(token);
-    token = strtok(NULL, ",");
-    if (token) libro->anno_publicazione = atoi(token);
-    if (token) libro->prezzo = atof(token);
-}
+void TrovaLibro (Libro libri[MAX], char titolo[20]){
+
+    for (int i = 0; i<MAX; i++){
+        if(strcmp(libri[i].titolo,titolo)==0){
+            printf("il libro ricercato:\n");
+            printf("%s %s %d %.2f", libri[i].titolo, libri[i].autore, 
+            libri[i].anno_publicazione,
+            libri[i].prezzo);
+        }
+    }
+} 
 int main() {
     Libro libri[MAX];
     FILE *file = fopen("libreria_libri.csv", "r");
     if (file == NULL) {
         printf("Errore nell'aprire il file \n");
+        return 1;
     }
-    int count = 0;
-    char line[MAX_LINE_LENGTH];
-
-   
-    // Legge il file riga per riga
-    while (fgets(line, sizeof(line), file) && count < MAX) {
-        line[strcspn(line, "\n")] = '\0'; // Rimuove il newline finale
-        parseCSVLine(line, &libri[count]);
-        count++;
-    }
-
+    int read = 0;
+    int books = 0;
+    do{
+        read = fscanf(file,"%49[^,],%49[^,], %d,%lf\n",
+        libri[books].titolo,
+        libri[books].autore,
+        &libri[books].anno_publicazione,
+        &libri[books].prezzo);
+        if(read==4){
+            books++;
+        }
+        else if(read !=4 && !feof(file)){
+            printf("lettura non riuscita\n");
+            return 1;
+        }
+    }while(!feof(file));
     fclose(file);
-    for (int i = 0; i < count; i++) {
-        printf("Libro %d:\n", i + 1);
-        printf("Titolo: %s\n", libri[i].titolo);
-        printf("Autore: %s\n", libri[i].autore);
-        printf("Categoria: %d\n", libri[i].tipo);
-        printf("Anno: %d\n\n", libri[i].anno_publicazione);
-        printf("Prezzo: %.2f\n\n", libri[i].prezzo); 
+    for (int i = 0; i<books; i++){
+        printf("%s %s %d %.2f\n", 
+        libri[i].titolo,
+        libri[i].autore,
+        libri[i].anno_publicazione,
+        libri[i].prezzo);
+        printf("\n");
     }
-
+    char titolo[20];
+    printf("inserire un libro da trovare \n");
+    scanf("%s", titolo);
+    TrovaLibro(libri, titolo);
     return 0;
 }
