@@ -16,12 +16,26 @@ void TrovaLibro (Libro libri[MAX], char titolo[20]){
     for (int i = 0; i<MAX; i++){
         if(strcmp(libri[i].titolo,titolo)==0){
             printf("il libro ricercato:\n");
-            printf("%s %s %d %.2f", libri[i].titolo, libri[i].autore, 
+            printf("%s %s %d %.2f \n", 
+            libri[i].titolo, 
+            libri[i].autore, 
             libri[i].anno_publicazione,
             libri[i].prezzo);
         }
     }
 } 
+void TrovaCategoria(Libro libri[MAX], char categoria[20]){
+    printf("i libri che appartengono a %s:\n", categoria);
+     for (int i = 0; i<MAX; i++){
+        if(strcmp(libri[i].tipo,categoria)==0){
+            printf("%s %s %d %.2f \n", 
+            libri[i].titolo, 
+            libri[i].autore, 
+            libri[i].anno_publicazione,
+            libri[i].prezzo);
+        }
+    }
+}
 int main() {
     Libro libri[MAX];
     FILE *file = fopen("libreria_libri.csv", "r");
@@ -32,31 +46,37 @@ int main() {
     int read = 0;
     int books = 0;
     do{
-        read = fscanf(file,"%49[^,],%49[^,], %d,%lf\n",
+        read = fscanf(file,"%49[^,],%49[^,],%d,%lf,%s\n",
         libri[books].titolo,
         libri[books].autore,
         &libri[books].anno_publicazione,
-        &libri[books].prezzo);
-        if(read==4){
+        &libri[books].prezzo,
+        libri[books].tipo);
+        if(read==5){
             books++;
         }
-        else if(read !=4 && !feof(file)){
+        else if(read !=5 && !feof(file)){
             printf("lettura non riuscita\n");
             return 1;
         }
     }while(!feof(file));
     fclose(file);
     for (int i = 0; i<books; i++){
-        printf("%s %s %d %.2f\n", 
+        printf("%s %s %d %.2f %s\n", 
         libri[i].titolo,
         libri[i].autore,
         libri[i].anno_publicazione,
-        libri[i].prezzo);
+        libri[i].prezzo,
+        libri[i].tipo);
         printf("\n");
     }
     char titolo[20];
     printf("inserire un libro da trovare \n");
-    scanf("%s", titolo); //scanf non legge titoli con spazi
+    scanf("%[^\n]", titolo);
     TrovaLibro(libri, titolo);
+    char categoria[20];
+    printf("inserire una categoria da trovare \n");
+    scanf("%s", categoria);
+    TrovaCategoria(libri, categoria);
     return 0;
 }
