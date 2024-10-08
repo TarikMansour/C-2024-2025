@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #define MAX 38
-#define MAX_LINE_LENGTH 1024
-#define MAX_FIELDS 100
 typedef struct {
     int anno_publicazione;
     double prezzo;
@@ -11,34 +9,8 @@ typedef struct {
     char titolo[50];
     char autore[50];
 }Libro;
-void TrovaLibro (Libro libri[MAX], char titolo[20]){
-
-    for (int i = 0; i<MAX; i++){
-        if(strcmp(libri[i].titolo,titolo)==0){
-            printf("il libro ricercato:\n");
-            printf("%s %s %d %.2f \n", 
-            libri[i].titolo, 
-            libri[i].autore, 
-            libri[i].anno_publicazione,
-            libri[i].prezzo);
-        }
-    }
-} 
-void TrovaCategoria(Libro libri[MAX], char categoria[20]){
-    printf("i libri che appartengono a %s:\n", categoria);
-     for (int i = 0; i<MAX; i++){
-        if(strcmp(libri[i].tipo,categoria)==0){
-            printf("%s %s %d %.2f \n", 
-            libri[i].titolo, 
-            libri[i].autore, 
-            libri[i].anno_publicazione,
-            libri[i].prezzo);
-        }
-    }
-}
-int main() {
-    Libro libri[MAX];
-    FILE *file = fopen("libreria_libri.csv", "r");
+int CaricaLibri(Libro libri[MAX], const char *filename){
+ FILE *file = fopen(filename, "r");
     if (file == NULL) {
         printf("Errore nell'aprire il file \n");
         return 1;
@@ -61,7 +33,11 @@ int main() {
         }
     }while(!feof(file));
     fclose(file);
-    for (int i = 0; i<books; i++){
+    return books;
+}
+void StampaLibreria(Libro libri[MAX], int numLibri){
+ 
+    for (int i = 0; i<numLibri; i++){
         printf("%s %s %d %.2f %s\n", 
         libri[i].titolo,
         libri[i].autore,
@@ -70,13 +46,60 @@ int main() {
         libri[i].tipo);
         printf("\n");
     }
+}
+void TrovaLibro (Libro libri[MAX], char titolo[20], int numlibri){
+
+    for (int i = 0; i<numlibri; i++){
+        if(strcmp(libri[i].titolo,titolo)==0){
+            printf("il libro ricercato:\n");
+            printf("%s %s %d %.2f \n", 
+            libri[i].titolo, 
+            libri[i].autore, 
+            libri[i].anno_publicazione,
+            libri[i].prezzo);
+        }
+    }
+} 
+void TrovaCategoria(Libro libri[MAX], char categoria[20], int numlibri){
+    printf("i libri che appartengono a %s:\n", categoria);
+     for (int i = 0; i<numlibri; i++){
+        if(strcmp(libri[i].tipo,categoria)==0){
+            printf("%s %s %d %.2f \n", 
+            libri[i].titolo, 
+            libri[i].autore, 
+            libri[i].anno_publicazione,
+            libri[i].prezzo);
+        }
+    }
+}
+int main() {
+    Libro libri[MAX];
+    int numLibri = CaricaLibri(libri, "libreria_libri.csv");
+    if (numLibri == 0) {
+        printf("non ci sono libri\n");
+        return 1;
+    }
+    int scelta;
     char titolo[20];
-    printf("inserire un libro da trovare \n");
-    scanf("%[^\n]", titolo);
-    TrovaLibro(libri, titolo);
     char categoria[20];
-    printf("inserire una categoria da trovare \n");
-    scanf("%s", categoria);
-    TrovaCategoria(libri, categoria);
+    printf("\n 0 per visualizzare la libreria \n 1 per ricercare un libro \n 2 per ricercare una categoria \n");
+    printf("inserire scelta:\n");
+    scanf("%d", &scelta);
+    getchar(); //elimina il carattere di newline dsl buffer di input
+    switch(scelta){
+        case 0: 
+        StampaLibreria(libri, numLibri);
+        break;
+        case 1:
+        printf("inserire un libro da trovare \n");
+        scanf("%[^\n]", titolo);
+        TrovaLibro(libri,titolo,numLibri);
+        break;
+        case 2:
+        printf("inserire una categoria da trovare \n");
+        scanf("%s", categoria);
+        TrovaCategoria(libri,categoria,numLibri);
+        break;
+    }
     return 0;
 }
