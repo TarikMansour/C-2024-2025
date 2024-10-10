@@ -38,7 +38,7 @@ int CaricaLibri(Libro libri[MAX], const char *filename){
 void StampaLibreria(Libro libri[MAX], int numLibri){
  
     for (int i = 0; i<numLibri; i++){
-        printf("%s %s %d %.2f %s\n", 
+        printf("Titolo [%s] Autore [%s] Anno [%d] Prezzo [%.2f] Categoria [%s]\n", 
         libri[i].titolo,
         libri[i].autore,
         libri[i].anno_publicazione,
@@ -52,11 +52,13 @@ void TrovaLibro (Libro libri[MAX], char titolo[20], int numlibri){
     for (int i = 0; i<numlibri; i++){
         if(strcmp(libri[i].titolo,titolo)==0){
             printf("il libro ricercato:\n");
-            printf("%s %s %d %.2f \n", 
+            printf("Titolo [%s] Autore [%s] Anno [%d] Prezzo [%.2f] Categoria [%s]\n", 
             libri[i].titolo, 
             libri[i].autore, 
             libri[i].anno_publicazione,
-            libri[i].prezzo);
+            libri[i].prezzo,
+            libri[i].tipo);
+            printf("\n");
         }
     }
 } 
@@ -64,11 +66,13 @@ void TrovaCategoria(Libro libri[MAX], char categoria[20], int numlibri){
     printf("i libri che appartengono a %s:\n", categoria);
      for (int i = 0; i<numlibri; i++){
         if(strcmp(libri[i].tipo,categoria)==0){
-            printf("%s %s %d %.2f \n", 
+            printf("Titolo [%s] Autore [%s] Anno [%d] Prezzo [%.2f] Categoria [%s]\n", 
             libri[i].titolo, 
             libri[i].autore, 
             libri[i].anno_publicazione,
-            libri[i].prezzo);
+            libri[i].prezzo,
+            libri[i].tipo);
+            printf("\n");
         }
     }
 }
