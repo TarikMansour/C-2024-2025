@@ -1,0 +1,33 @@
+//CLIENT
+#include <stdio.h>       //std in-out
+#include <stdlib.h>      //per utilizzo di certe funzioni:htonl,rand,....
+#include <sys/socket.h>  //funz. accept+bind+listen
+#include <sys/types.h>   //funz. accept
+#include <netinet/in.h>  //definiscono la struttura degli indirizzi 
+#include <string.h>      //funz. stringhe
+#include <errno.h>       //gestioni errori connessione
+#include <ctype.h>       //bind
+#include <unistd.h>     // file header che consente l'accesso alle API dello standard POSIX
+
+#define DIM 50
+#define SERVERPORT 1313
+
+int main(int argc,char** argv)
+{   //creazione di un elemento di tipo sockaddr vedi pagina 162
+    struct sockaddr_in servizio;
+     //inizializzazione dell'elemento di tipo sockaddr
+    servizio.sin_family=AF_INET; //famiglia di indirizzi da utilizzare
+    servizio.sin_addr.s_addr=htonl(INADDR_ANY); //impostiamo l'indirizzo di rete del host locale con INADDR_ANY
+    servizio.sin_port=htons(SERVERPORT);       //impostiamo la porta
+    char str1[DIM];     //Stringa da inviare
+    int socketfd;// identificatore della socket
+    //creazione e definizione del Socket di tipo stream tcp pg 163
+    socketfd=socket(AF_INET,SOCK_STREAM,0); //crea socket connection-oriented (TCP) con IPV4 e inseriamo 0 in modo tale che il protocollo più adatto (TCP) vengo scelto automaticamente
+    //connessione al server pag.173
+    connect(socketfd,(struct sockaddr*)&servizio,sizeof(servizio));  //connessione al server con le informazioni del client e socket
+    printf("Inserisci la stringa\n");
+    scanf("%s",str1);
+    write(socketfd,str1,sizeof(str1)); 
+    close(socketfd);
+    return 0;
+}
